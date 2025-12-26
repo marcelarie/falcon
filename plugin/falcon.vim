@@ -8,6 +8,25 @@ if exists('g:loaded_falcon')
 endif
 let g:loaded_falcon=1
 
+" Try to use Lua setup if available (for lazy.nvim integration)
+" This allows proper configuration with opts in lazy.nvim
+if has('nvim')
+  try
+    " If Lua setup hasn't been called yet, set up with existing global variables
+    if !exists('g:falcon_setup_called')
+      let g:falcon_setup_called = 1
+      lua require('falcon').setup({
+        \ background = (vim.g.falcon_background == nil or vim.g.falcon_background == 1),
+        \ italic = (vim.g.falcon_italic == 1),
+        \ bold = (vim.g.falcon_bold == 1),
+        \ inactive = (vim.g.falcon_inactive == 1),
+        \ })
+    endif
+  catch
+    " If Lua setup fails, fall back to original Vim plugin behavior
+  endtry
+endif
+
 " Required as colors will come from terminal without
 if !exists('g:fzf_colors')
   let g:fzf_colors=
